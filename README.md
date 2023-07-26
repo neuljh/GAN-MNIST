@@ -1,0 +1,2 @@
+# GAN-MNIST
+普通的GAN来生成MNIST图片
