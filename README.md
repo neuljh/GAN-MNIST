@@ -5,6 +5,7 @@
 
 ①　导入对应的类库
 
+```python
 # from tensorflow import keras
 import sys
 from keras.datasets import mnist
@@ -15,8 +16,10 @@ from keras.optimizers import adam_v2
 from tqdm import tqdm
 import numpy as np
 import matplotlib.pyplot as plt
+```
 
 ②　关键代码
+```python
 # Load the dataset
 def load_data():
   (x_train, y_train), (_, _) = mnist.load_data()
@@ -26,6 +29,8 @@ def load_data():
 
 X_train, y_train = load_data()
 print(X_train.shape, y_train.shape)
+```
+
 该代码的目的是加载MNIST数据集并将其准备为训练用的形式。
 第一部分 load_data() 函数从Keras中的mnist数据集中加载训练数据。该函数返回一个元组 (x_train, y_train)，其中 x_train 是形状为 (60000, 28, 28) 的训练图像数组，y_train 是形状为 (60000,) 的训练标签数组。由于测试集不会被使用，因此用 _ 占位符表示。
 接下来，将 x_train 的数据类型转换为 np.float32，并将所有像素值缩放到[-1,1]之间。这可以通过将每个像素值减去127.5并除以127.5来实现。这将导致所有像素值的范围从 [0, 255] 变为 [-1, 1]。
@@ -35,7 +40,7 @@ print(X_train.shape, y_train.shape)
 
 ![image](https://github.com/neuljh/GAN-MNIST/assets/132900799/f332a5d3-a3bc-44d6-854a-e804b07e93d5)
 
-
+```python
 def build_generator():
     model = Sequential()
     model.add(Dense(units=256, input_dim=100))
@@ -49,6 +54,7 @@ def build_generator():
     return model
 generator = build_generator()
 generator.summary()
+```
 
 该代码定义了一个生成器模型，其目的是生成与MNIST数据集中的手写数字类似的假图像。以下是对这段代码的详细解释：
 build_generator() 函数定义了一个名为 model 的顺序模型。该函数开始定义了一个由四个全连接层组成的神经网络，其中每个层都使用了 LeakyReLU 激活函数。
@@ -62,6 +68,7 @@ build_generator() 函数定义了一个名为 model 的顺序模型。该函数�
 
 ![image](https://github.com/neuljh/GAN-MNIST/assets/132900799/f29c5835-fa45-4944-93f3-c700d9920904)
 
+```python
 def build_discriminator():
     model = Sequential()
     model.add(Dense(units=1024, input_dim=784))
@@ -78,6 +85,8 @@ def build_discriminator():
     return model
 discriminator = build_discriminator()
 discriminator.summary()
+```
+
 该代码定义了一个判别器模型，其目的是判别输入的图像是否来自于MNIST数据集中的真实图像。以下是对这段代码的详细解释：
 build_discriminator() 函数定义了一个名为 model 的顺序模型。该函数开始定义了一个由四个全连接层组成的神经网络，其中每个层都使用了 LeakyReLU 激活函数和 Dropout 正则化。
 第一个全连接层使用 1024 个神经元，其输入维度为 784，这表示输入给判别器的是一维的 28 x 28 = 784 的图像向量。
@@ -90,7 +99,7 @@ build_discriminator() 函数定义了一个名为 model 的顺序模型。该函
 
 ![image](https://github.com/neuljh/GAN-MNIST/assets/132900799/bbc75318-95ab-4a7d-8be5-07da6a0870e8)
 
-
+```python
 def draw_images(generator, epoch, examples=25, dim=(5,5), figsize=(10,10)):
     noise= np.random.normal(loc=0, scale=1, size=[examples, 100])
     generated_images = generator.predict(noise)
@@ -102,6 +111,7 @@ def draw_images(generator, epoch, examples=25, dim=(5,5), figsize=(10,10)):
         plt.axis('off')
     plt.tight_layout()
     plt.savefig('Generated_images %d.png' %epoch)
+```
 这段代码定义了一个函数 draw_images()，该函数接受一个生成器模型、当前的 epoch 数量、要生成的示例数量、图像尺寸和绘图参数等参数。该函数的作用是使用给定的生成器模型生成一些假图像，并将它们可视化到一张图像中。
 首先，该函数使用 np.random.normal() 函数从正态分布中随机生成一些噪声向量。这些噪声向量是输入到生成器模型中的，生成器将其转换为与 MNIST 数据集中的真实图像类似的假图像。
 接下来，使用给定的生成器模型对噪声向量进行预测，以生成一些假图像。生成的图像是一个多维数组，需要进行形状转换，使其具有 28 x 28 的大小，与 MNIST 数据集中的真实图像相同。
@@ -113,7 +123,7 @@ def draw_images(generator, epoch, examples=25, dim=(5,5), figsize=(10,10)):
 
 ![image](https://github.com/neuljh/GAN-MNIST/assets/132900799/0d56d56e-4857-4526-9d83-ebf0a0dc9a60)
 
-
+```python
 def train_GAN(epochs=1, batch_size=128):
     # Loading the data
     X_train, y_train = load_data()
@@ -145,6 +155,8 @@ def train_GAN(epochs=1, batch_size=128):
         if i == 1 or i % 10 == 0:
             draw_images(generator, i)
 train_GAN(epochs=100, batch_size=256)
+```
+
 该代码定义并训练了一个 GAN（生成对抗网络）模型，以从 MNIST 数据集中生成类似于手写数字的图像。 以下是对代码的逐步解释：
 load_data() 函数加载 MNIST 数据集并将预处理后的图像作为 numpy 数组 x_train 返回，并将它们对应的标签作为 y_train 返回。 图像在 -1 和 1 之间归一化。
 build_generator() 函数为生成器创建一个顺序模型。 它以形状为 (batch_size, 100) 的随机噪声向量作为输入，并生成形状为 (batch_size, 28, 28, 1) 的假图像作为输出。 生成器有 3 个具有 leaky ReLU 激活的致密层和一个具有双曲正切激活的最终致密层。 生成器使用二元交叉熵损失和学习率为 0.0002 且 beta_1=0.5 的 Adam 优化器编译。
